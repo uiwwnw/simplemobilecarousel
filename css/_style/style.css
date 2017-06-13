@@ -1,0 +1,52 @@
+/* line 4, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item {
+  width: 300px;
+  height: 50px;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(1) {
+  background: #111;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(2) {
+  background: #222;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(3) {
+  background: #333;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(4) {
+  background: #444;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(5) {
+  background: #555;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(6) {
+  background: #666;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(7) {
+  background: #777;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(8) {
+  background: #888;
+}
+
+/* line 7, D:/work/test/slide/css/_scss/style.scss */
+.slide .slide_item:nth-child(9) {
+  background: #999;
+}
+
+/*# sourceMappingURL=../_style/style.map */
