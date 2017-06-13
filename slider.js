@@ -18,7 +18,7 @@ var slider = function (id) {
             ui_slide.virtualWrap = document.createElement('div');
             ui_slide.dom = document.getElementById(id);
             ui_slide.item = ui_slide.dom.children || children(ui_slide.dom);
-            ui_slide.dom.setAttribute('style','width: 100%;overflow: hidden;overflow-x: auto;');
+            ui_slide.dom.setAttribute('style','overflow: hidden;overflow-x: auto;');
             fnSlider.prototype.ptDo(ui_slide)
     }
     fnSlider.prototype = {
@@ -50,3 +50,4 @@ var slider = function (id) {
     }
     var newSlider = new fnSlider(id);
 }
+// uiwwnw
