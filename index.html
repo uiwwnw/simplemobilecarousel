@@ -9,18 +9,56 @@
 </head>
 
 <body>
-	<div class="slide" id="slide">
-		<div class="slide_item" style="width:900px;height:50px">a</div>
-		<div class="slide_item" style="width:800px;height:50px">b</div>
-		<div class="slide_item" style="width:700px;height:50px">d</div>
-		<div class="slide_item" style="width:600px;height:50px">e</div>
-		<div class="slide_item" style="width:500px;height:50px">f</div>
-		<div class="slide_item" style="width:400px;height:50px">g</div>
-		<div class="slide_item" style="width:300px;height:50px">h</div>
-		<div class="slide_item" style="width:200px;height:50px">i</div>
-		<div class="slide_item" style="width:100px;height:50px">j</div>
+	<div class="slide" id="slideWrap">
+		<div class="slide_item" style="width:500px;height:150px">a</div>
+		<div class="slide_item" style="width:500px;height:150px">b</div>
+		<div class="slide_item" style="width:500px;height:150px">d</div>
+		<div class="slide_item" style="width:500px;height:150px">e</div>
+		<div class="slide_item" style="width:500px;height:150px">f</div>
+		<div class="slide_item" style="width:500px;height:150px">g</div>
+		<div class="slide_item" style="width:500px;height:150px">h</div>
+		<div class="slide_item" style="width:500px;height:150px">i</div>
+		<div class="slide_item" style="width:500px;height:150px">j</div>
 	</div>
-	<script>slider('slide')</script>
+	<div class="slide" id="slideWrap1">
+		<div class="slide_item" style="width:400px;height:150px">a</div>
+		<div class="slide_item" style="width:400px;height:150px">b</div>
+		<div class="slide_item" style="width:400px;height:150px">d</div>
+		<div class="slide_item" style="width:400px;height:150px">e</div>
+		<div class="slide_item" style="width:400px;height:150px">f</div>
+		<div class="slide_item" style="width:400px;height:150px">g</div>
+		<div class="slide_item" style="width:400px;height:150px">h</div>
+		<div class="slide_item" style="width:400px;height:150px">i</div>
+		<div class="slide_item" style="width:400px;height:150px">j</div>
+	</div>
+	<div class="slide" id="slideWrap2">
+		<div class="slide_item" style="width:300px;height:150px">a</div>
+		<div class="slide_item" style="width:300px;height:150px">b</div>
+		<div class="slide_item" style="width:300px;height:150px">d</div>
+		<div class="slide_item" style="width:300px;height:150px">e</div>
+		<div class="slide_item" style="width:300px;height:150px">f</div>
+		<div class="slide_item" style="width:300px;height:150px">g</div>
+		<div class="slide_item" style="width:300px;height:150px">h</div>
+		<div class="slide_item" style="width:300px;height:150px">i</div>
+		<div class="slide_item" style="width:300px;height:150px">j</div>
+	</div>
+	<div class="slide" id="customId">
+		<div class="slide_item" style="width:100vw;height:150px">a</div>
+		<div class="slide_item" style="width:100vw;height:150px">b</div>
+		<div class="slide_item" style="width:100vw;height:150px">d</div>
+		<div class="slide_item" style="width:100vw;height:150px">e</div>
+		<div class="slide_item" style="width:100vw;height:150px">f</div>
+		<div class="slide_item" style="width:100vw;height:150px">g</div>
+		<div class="slide_item" style="width:100vw;height:150px">h</div>
+		<div class="slide_item" style="width:100vw;height:150px">i</div>
+		<div class="slide_item" style="width:100vw;height:150px">j</div>
+	</div>
+	<script>
+	slider()
+	slider('slideWrap1')
+	slider('slideWrap2')
+	slider('customId')
+	</script>
 </body>
 
 </html>

@@ -1,45 +1,50 @@
+/* line 3, D:/work/test/slide/css/_scss/style.scss */
+.slide_item {
+  color: #fff;
+}
+
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(1) {
+.slide_item:nth-child(1) {
   background: #111;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(2) {
+.slide_item:nth-child(2) {
   background: #222;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(3) {
+.slide_item:nth-child(3) {
   background: #333;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(4) {
+.slide_item:nth-child(4) {
   background: #444;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(5) {
+.slide_item:nth-child(5) {
   background: #555;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(6) {
+.slide_item:nth-child(6) {
   background: #666;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(7) {
+.slide_item:nth-child(7) {
   background: #777;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(8) {
+.slide_item:nth-child(8) {
   background: #888;
 }
 
 /* line 6, D:/work/test/slide/css/_scss/style.scss */
-.slide .slide_item:nth-child(9) {
+.slide_item:nth-child(9) {
   background: #999;
 }
 

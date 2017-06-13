@@ -1,9 +1,10 @@
 @charset "UTF-8";
-.slide{
+// .slide{
     .slide_item{
         // 아이템 구별을 위한 임시 스타일
         @for $i from 1 through 9{
             &:nth-child(#{$i}){background: #{'#' + $i + $i + $i};}
         }
+        color: #fff;
     }
-}
+// }
