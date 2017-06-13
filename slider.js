@@ -1,4 +1,4 @@
-var slider = function () {
+var slider = function (id) {
     "use strict";
     function children( parent ) {
         var node = parent.firstChild;
@@ -12,10 +12,11 @@ var slider = function () {
         }
         return result;
     }
-    function fnSlider(){
+    function fnSlider(id){
+        (id===undefined)&&(id='slideWrap');
         var ui_slide = {};
             ui_slide.virtualWrap = document.createElement('div');
-            ui_slide.dom = document.getElementById('slideWrap');
+            ui_slide.dom = document.getElementById(id);
             ui_slide.item = ui_slide.dom.children || children(ui_slide.dom);
             ui_slide.dom.setAttribute('style','width: 100%;overflow: hidden;overflow-x: auto;');
             fnSlider.prototype.ptDo(ui_slide)
@@ -47,5 +48,5 @@ var slider = function () {
            this.ptStyle(ui_slide)
        }
     }
-    var newSlider = new fnSlider();
+    var newSlider = new fnSlider(id);
 }
