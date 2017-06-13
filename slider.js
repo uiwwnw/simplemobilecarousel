@@ -26,7 +26,13 @@ var slider = function () {
             ui_slide.itemLength = ui_slide.item.length,
             ui_slide.wrapWidth = 0;
             for(i; i < ui_slide.itemLength; i += 1){
-                ui_slide.item[i].setAttribute('style','float:left;');
+                var style = ui_slide.item[i].getAttribute('style');
+                if(style !== null){
+                    style += ';float:left;'
+                }else{
+                    style = 'float:left;'
+                }
+                ui_slide.item[i].setAttribute('style',style);
                 ui_slide.wrapWidth += ui_slide.wrapWidth + ui_slide.item[i].clientWidth;
             }
             this.ptMoveItem(ui_slide);
@@ -39,7 +45,6 @@ var slider = function () {
         },
        ptDo:function(ui_slide){
            this.ptStyle(ui_slide)
-        //    console.log(ui_slide)
        }
     }
     var newSlider = new fnSlider();
