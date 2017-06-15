@@ -39,6 +39,10 @@ var slider = function (setting) {
             ui_slide.button = setting['button'];
             ui_slide.buttonWidth = setting['buttonWidth'] || 50;
             ui_slide.buttonHeight = setting['buttonHeight'] || 50;
+            ui_slide.buttonLeftClassName = setting['buttonLeftClassName'] || 'btnLeft';
+            ui_slide.buttonRightClassName = setting['buttonRightClassName'] || 'btnRight';
+            ui_slide.fullWidth = setting['fullWidth'];
+            (ui_slide.fullWidth)&&(ui_slide.windowWidth =  document.body.clientWidth);
         }
         ui_slide.virtualWrap = document.createElement('div');
         ui_slide.item = ui_slide.dom.children;
@@ -46,6 +50,7 @@ var slider = function (setting) {
         ui_slide.itemWidth = [];
         ui_slide.wrapWidth = 0;
         ui_slide.num = 0;
+        ui_slide.currentPosition = 0;
         ui_slide.dom.setAttribute('style', 'overflow:hidden;overflow-x:auto;');
         fnSlider.prototype.ptDo(ui_slide)
     }
@@ -59,8 +64,11 @@ var slider = function (setting) {
                 } else {
                     style = 'float:left;'
                 }
+                (ui_slide.fullWidth)&&(style+='width:'+ui_slide.windowWidth+'px;');
                 ui_slide.item[i].setAttribute('style', style);
                 ui_slide.wrapWidth += ui_slide.item[i].clientWidth;
+                // console.log(ui_slide.item[i].clientWidth)
+                // console.log(document.body.clientWidth)
                 ui_slide.itemWidth.push(ui_slide.wrapWidth);
             }
         },
@@ -85,6 +93,7 @@ var slider = function (setting) {
             scrollTo(ui_slide.dom, ui_slide.scrollPosition[ui_slide.num], ui_slide.setIntervalSpeed)
         },
         ptSetInt: function (ui_slide) {
+            // console.log(ui_slide.num)
             ui_slide.setIntervalToggle = setInterval(function () {
                 if (ui_slide.num < ui_slide.itemLength - 1) {
                     ui_slide.num += 1;
@@ -117,9 +126,8 @@ var slider = function (setting) {
                 // });
                 ui_slide.dom.addEventListener('mouseup', function () {
                     ui_slide.mouse = 'up';
-                    ui_slide.currentPosition = ui_slide.dom.scrollLeft;
                     fnSlider.prototype.ptScrollCheck(ui_slide);
-                    console.log(ui_slide.num)
+                    // console.log(ui_slide.num)
                     fnSlider.prototype.ptStopInt(ui_slide);
                 })
             }
@@ -129,39 +137,46 @@ var slider = function (setting) {
             })
         },
         ptScrollCheck: function (ui_slide) {
-            // todo:진행중;
+            ui_slide.dom.addEventListener('scroll',function(){
+                ui_slide.currentPosition = ui_slide.dom.scrollLeft;
+            })
             var i = 0,
-                abs = 0,
-                near=0,
-                min = ui_slide.scrollPosition[ui_slide.itemLength-1];
-                // console.log(ui_slide.currentPosition)
+                btw=[],
+                dis;
             for (i; i < ui_slide.itemLength; i+=1) {
-                abs = ((ui_slide.scrollPosition[i] - ui_slide.currentPosition) < 0) ? -(ui_slide.scrollPosition[i] - ui_slide.currentPosition) :
-                    (ui_slide.scrollPosition[i] - ui_slide.currentPosition);
-                if (abs < min) {
-                    min = abs; //MIN
-                    near = ui_slide.scrollPosition[i] //near : 가까운값
-                    ui_slide.num = i;
-                    // return ui_slide.num;
-                    // console.log(i)
-                }
+                btw.push(Math.abs(ui_slide.scrollPosition[i] - ui_slide.currentPosition));
             }
+            dis = Math.min.apply(null, btw);
+            // console.log(btw.indexOf(dis))
+            ui_slide.num = btw.indexOf(dis);
+            return ui_slide.num;
         },
         ptMakeBtn: function (ui_slide) {
             var btnWidth = ui_slide.buttonWidth,
                 btnHeight = ui_slide.buttonHeight,
                 commonStyle = 'position: absolute;width:' + btnWidth + 'px;height:' + btnHeight + 'px;margin-top:' + (ui_slide.wrapHeight / 2 - btnHeight / 2) + 'px;',
                 leftStyle = 'left:0;',
-                rightStyle = 'right:0;',
-                btnLeft = document.createElement('button'),
-                btnRight = document.createElement('button');
-            ui_slide.dom.appendChild(btnLeft);
-            ui_slide.dom.appendChild(btnRight);
-            btnLeft.setAttribute('style', commonStyle + leftStyle);
-            btnRight.setAttribute('style', commonStyle + rightStyle);
+                rightStyle = 'right:0;';
+                ui_slide.btnLeft = document.createElement('button'),
+                ui_slide.btnRight = document.createElement('button');
+            ui_slide.dom.appendChild(ui_slide.btnLeft);
+            ui_slide.dom.appendChild(ui_slide.btnRight);
+            ui_slide.btnLeft.setAttribute('style', commonStyle + leftStyle);
+            ui_slide.btnLeft.setAttribute('class',ui_slide.buttonLeftClassName);
+            ui_slide.btnRight.setAttribute('style', commonStyle + rightStyle);
+            ui_slide.btnRight.setAttribute('class',ui_slide.buttonRightClassName)
         },
-        ptBtnAct: function () {
-
+        ptBtnAct: function (ui_slide) {
+            ui_slide.btnLeft.addEventListener('click',function(){
+                fnSlider.prototype.ptScrollCheck(ui_slide);
+                ui_slide.num = ui_slide.num - 1 || 0;
+                fnSlider.prototype.ptSlide(ui_slide);
+            })
+            ui_slide.btnRight.addEventListener('click',function(){
+                fnSlider.prototype.ptScrollCheck(ui_slide);
+                ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1)&&(ui_slide.num + 1) || ui_slide.itemLength - 1;
+                fnSlider.prototype.ptSlide(ui_slide);
+            })
         },
         ptDo: function (ui_slide) {
             this.ptStyle(ui_slide);
@@ -172,6 +187,7 @@ var slider = function (setting) {
                 this.ptMouse(ui_slide);
             }
             if (ui_slide.button) {
+                this.ptSlideInit(ui_slide);
                 this.ptMakeBtn(ui_slide);
                 this.ptBtnAct(ui_slide);
                 this.ptMouse(ui_slide);
