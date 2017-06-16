@@ -1,23 +1,10 @@
 var slider = function (setting) {
     "use strict";
-    // function children(parent) {
-    //     var node = parent.firstChild;
-    //     var result = [];
-    //     if (node) {
-    //         do {
-    //             if (node.nodeType === 1) {
-    //                 result.push(node);
-    //             }
-    //         } while (node = node.nextSibling)
-    //     }
-    //     return result;
-    // }
-    function isMobile(){
-	var UserAgent = navigator.userAgent;
-        if (UserAgent.match(/iPhone|iPod|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null)
-        {
+    function isMobile() {
+        var UserAgent = navigator.userAgent;
+        if (UserAgent.match(/iPhone|iPod|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -31,7 +18,13 @@ var slider = function (setting) {
 
             setTimeout(function () {
                 element.scrollLeft = element.scrollLeft + perTick;
-                if (element.scrollLeft === to) return;
+                if (isMobile) {
+                    if (element.scrollLeft === to) {
+                        return element.scrollLeft;
+                    };
+                } else {
+                    if (element.scrollLeft === to) return;
+                }
                 scrollTo(element, to, duration - 10);
             }, 10);
         }
@@ -52,7 +45,7 @@ var slider = function (setting) {
             ui_slide.buttonLeftClassName = setting['buttonLeftClassName'] || 'btnLeft';
             ui_slide.buttonRightClassName = setting['buttonRightClassName'] || 'btnRight';
             ui_slide.fullWidth = setting['fullWidth'];
-            (ui_slide.fullWidth) && (ui_slide.windowWidth = document.body.clientWidth);
+            (ui_slide.fullWidth) && (ui_slide.windowWidth = window.innerWidth);
         }
         ui_slide.virtualWrap = document.createElement('div');
         ui_slide.item = ui_slide.dom.children;
@@ -100,13 +93,12 @@ var slider = function (setting) {
             // console.log(ui_slide.scrollPosition)
         },
         ptSlide: function (ui_slide) {
-            scrollTo(ui_slide.dom, ui_slide.scrollPosition[ui_slide.num], ui_slide.setIntervalSpeed)
+            scrollTo(ui_slide.dom, ui_slide.scrollPosition[ui_slide.num], ui_slide.setIntervalSpeed);
         },
         ptSetInt: function (ui_slide) {
-            // console.log(ui_slide.num)
             ui_slide.setIntervalToggle = setInterval(function () {
                 if (ui_slide.num < ui_slide.itemLength - 1 || ui_slide.num === 'zero') {
-                    (ui_slide.num === 'zero')&&(ui_slide.num = 0)
+                    (ui_slide.num === 'zero') && (ui_slide.num = 0)
                     ui_slide.num += 1;
                 } else {
                     ui_slide.num = 'zero';
@@ -117,46 +109,49 @@ var slider = function (setting) {
         ptStopInt: function (ui_slide) {
             clearTimeout(ui_slide.setTimeoutToggle);
             clearInterval(ui_slide.setIntervalToggle);
-            if (ui_slide.setInterval && ui_slide.mouse === 'up') {
+            if (ui_slide.setInterval && ui_slide.switch === true) {
                 ui_slide.setTimeoutToggle = setTimeout(function () {
-                    // 2,리턴된 num값 넣고 실행
                     fnSlider.prototype.ptSetInt(ui_slide);
                 }, ui_slide.setIntervalTime * 2)
             }
         },
         ptMouse: function (ui_slide) {
-            // 모바일작업해야됨
-            var down = 'mousedown',
-                up = 'mouseup';
-            if(isMobile()){
-                down = 'touchstart'
-                up = 'touchend';
-            }
-            ui_slide.dom.addEventListener(down, function () {
-                ui_slide.mouse = 'down';
-                (ui_slide.setInterval)&&(fnSlider.prototype.ptStopInt(ui_slide));
-            });
-            
-            ui_slide.dom.addEventListener(up, function () {
-                ui_slide.mouse = 'up';
-                (ui_slide.setInterval)&&(fnSlider.prototype.ptStopInt(ui_slide));
+            function commonCheck(ui_slide) {
+                ui_slide.switch = true;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
                 fnSlider.prototype.ptScrollCheck(ui_slide);
-            })
-            // ui_slide.dom.addEventListener(up, function () {
-            //     ui_slide.mouse = 'down';
-            //     // 1.scroll위치 체크 후 가장 밀접한 아이템의 ui_slide.num값으로 리턴,
-            // })
+            }
+            if (isMobile()) {
+                ui_slide.dom.addEventListener('touchstart', function () {
+                    ui_slide.switch = false;
+                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+                });
+                ui_slide.dom.addEventListener('touchend', function () {
+                    ui_slide.switch = false;
+                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+                });
+            } else {
+                ui_slide.dom.addEventListener('mousedown', function () {
+                    ui_slide.switch = false;
+                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+                });
+                ui_slide.dom.addEventListener('mouseup', function () {
+                    commonCheck(ui_slide);
+                });
+            }
         },
         ptScrollCheck: function (ui_slide) {
-            ui_slide.dom.addEventListener('scroll', function () {
-                ui_slide.currentPosition = ui_slide.dom.scrollLeft;
-            })
+            if(!isMobile() && ui_slide.button){
+                ui_slide.dom.addEventListener('scroll',function(){
+                    ui_slide.currentPosition = ui_slide.dom.scrollLeft;
+                })
+            }
             var i = 0,
                 absBtw = [],
                 // btw = [],
                 // dis,
                 absDis;
-                // num;
+            // num;
             for (i; i < ui_slide.itemLength; i += 1) {
                 absBtw.push(Math.abs(ui_slide.scrollPosition[i] - ui_slide.currentPosition));
                 // btw.push(ui_slide.scrollPosition[i] - ui_slide.currentPosition);
@@ -176,7 +171,7 @@ var slider = function (setting) {
         ptMakeBtn: function (ui_slide) {
             var btnWidth = ui_slide.buttonWidth,
                 btnHeight = ui_slide.buttonHeight,
-                commonStyle = 'position: absolute;width:' + btnWidth + 'px;height:' + btnHeight + 'px;margin-top:' + (ui_slide.wrapHeight / 2 - btnHeight / 2) + 'px;font-size:' + btnHeight + 'px;line-height:'+btnHeight+'px;',
+                commonStyle = 'position: absolute;width:' + btnWidth + 'px;height:' + btnHeight + 'px;margin-top:' + (ui_slide.wrapHeight / 2 - btnHeight / 2) + 'px;font-size:' + btnHeight + 'px;line-height:' + btnHeight + 'px;',
                 leftStyle = 'left:0;',
                 rightStyle = 'right:0;';
             ui_slide.btnLeft = document.createElement('button'),
@@ -192,8 +187,7 @@ var slider = function (setting) {
         },
         ptBtnAct: function (ui_slide) {
             ui_slide.btnLeft.addEventListener('click', function () {
-                ui_slide.num =  (ui_slide.num > 0) && (ui_slide.num - 1);
-                // console.log(ui_slide.num)
+                ui_slide.num = (ui_slide.num > 0) && (ui_slide.num - 1);
                 fnSlider.prototype.ptSlide(ui_slide);
             })
             ui_slide.btnRight.addEventListener('click', function () {

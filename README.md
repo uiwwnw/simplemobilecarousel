@@ -1,4 +1,4 @@
 # simplemobilecarousel
-## simple, fast, slide show/swipe
+## simple, fast, mobile slide show
 
 ### version 0.1
