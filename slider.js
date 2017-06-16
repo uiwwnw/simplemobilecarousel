@@ -12,9 +12,18 @@ var slider = function (setting) {
     //     }
     //     return result;
     // }
+    function isMobile(){
+	var UserAgent = navigator.userAgent;
+        if (UserAgent.match(/iPhone|iPod|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
     function scrollTo(element, to, duration) {
-        if (to === 0) {
-            element.scrollLeft = to;
+        if (to === 'zero') {
+            element.scrollLeft = 0;
         } else {
             if (duration <= 0) return;
             var difference = to - element.scrollLeft,
@@ -29,6 +38,7 @@ var slider = function (setting) {
     }
     function fnSlider(setting) {
         var ui_slide = {};
+        // console.log(isMobile())
         if (setting === undefined) {
             ui_slide.dom = document.getElementById('slideWrap')
         } else {
@@ -42,7 +52,7 @@ var slider = function (setting) {
             ui_slide.buttonLeftClassName = setting['buttonLeftClassName'] || 'btnLeft';
             ui_slide.buttonRightClassName = setting['buttonRightClassName'] || 'btnRight';
             ui_slide.fullWidth = setting['fullWidth'];
-            (ui_slide.fullWidth)&&(ui_slide.windowWidth =  document.body.clientWidth);
+            (ui_slide.fullWidth) && (ui_slide.windowWidth = document.body.clientWidth);
         }
         ui_slide.virtualWrap = document.createElement('div');
         ui_slide.item = ui_slide.dom.children;
@@ -64,7 +74,7 @@ var slider = function (setting) {
                 } else {
                     style = 'float:left;'
                 }
-                (ui_slide.fullWidth)&&(style+='width:'+ui_slide.windowWidth+'px;');
+                (ui_slide.fullWidth) && (style += 'width:' + ui_slide.windowWidth + 'px;');
                 ui_slide.item[i].setAttribute('style', style);
                 ui_slide.wrapWidth += ui_slide.item[i].clientWidth;
                 // console.log(ui_slide.item[i].clientWidth)
@@ -95,10 +105,11 @@ var slider = function (setting) {
         ptSetInt: function (ui_slide) {
             // console.log(ui_slide.num)
             ui_slide.setIntervalToggle = setInterval(function () {
-                if (ui_slide.num < ui_slide.itemLength - 1) {
+                if (ui_slide.num < ui_slide.itemLength - 1 || ui_slide.num === 'zero') {
+                    (ui_slide.num === 'zero')&&(ui_slide.num = 0)
                     ui_slide.num += 1;
                 } else {
-                    ui_slide.num = 0;
+                    ui_slide.num = 'zero';
                 }
                 fnSlider.prototype.ptSlide(ui_slide);
             }, ui_slide.setIntervalTime)
@@ -106,7 +117,7 @@ var slider = function (setting) {
         ptStopInt: function (ui_slide) {
             clearTimeout(ui_slide.setTimeoutToggle);
             clearInterval(ui_slide.setIntervalToggle);
-            if (ui_slide.setInterval) {
+            if (ui_slide.setInterval && ui_slide.mouse === 'up') {
                 ui_slide.setTimeoutToggle = setTimeout(function () {
                     // 2,리턴된 num값 넣고 실행
                     fnSlider.prototype.ptSetInt(ui_slide);
@@ -115,66 +126,78 @@ var slider = function (setting) {
         },
         ptMouse: function (ui_slide) {
             // 모바일작업해야됨
-            if (ui_slide.setInterval) {
-                ui_slide.dom.addEventListener('mousedown', function () {
-                    ui_slide.mouse = 'down';
-                    fnSlider.prototype.ptStopInt(ui_slide);
-                });
-                // ui_slide.dom.addEventListener('mouseleave',function(){
-                //     ui_slide.mouse = 'leave';
-                //     fnSlider.prototype.ptStopInt(ui_slide);
-                // });
-                ui_slide.dom.addEventListener('mouseup', function () {
-                    ui_slide.mouse = 'up';
-                    fnSlider.prototype.ptScrollCheck(ui_slide);
-                    // console.log(ui_slide.num)
-                    fnSlider.prototype.ptStopInt(ui_slide);
-                })
+            var down = 'mousedown',
+                up = 'mouseup';
+            if(isMobile()){
+                down = 'touchstart'
+                up = 'touchend';
             }
-            ui_slide.dom.addEventListener('mouseup', function () {
+            ui_slide.dom.addEventListener(down, function () {
                 ui_slide.mouse = 'down';
-                // 1.scroll위치 체크 후 가장 밀접한 아이템의 ui_slide.num값으로 리턴,
+                (ui_slide.setInterval)&&(fnSlider.prototype.ptStopInt(ui_slide));
+            });
+            
+            ui_slide.dom.addEventListener(up, function () {
+                ui_slide.mouse = 'up';
+                (ui_slide.setInterval)&&(fnSlider.prototype.ptStopInt(ui_slide));
+                fnSlider.prototype.ptScrollCheck(ui_slide);
             })
+            // ui_slide.dom.addEventListener(up, function () {
+            //     ui_slide.mouse = 'down';
+            //     // 1.scroll위치 체크 후 가장 밀접한 아이템의 ui_slide.num값으로 리턴,
+            // })
         },
         ptScrollCheck: function (ui_slide) {
-            ui_slide.dom.addEventListener('scroll',function(){
+            ui_slide.dom.addEventListener('scroll', function () {
                 ui_slide.currentPosition = ui_slide.dom.scrollLeft;
             })
             var i = 0,
-                btw=[],
-                dis;
-            for (i; i < ui_slide.itemLength; i+=1) {
-                btw.push(Math.abs(ui_slide.scrollPosition[i] - ui_slide.currentPosition));
+                absBtw = [],
+                // btw = [],
+                // dis,
+                absDis;
+                // num;
+            for (i; i < ui_slide.itemLength; i += 1) {
+                absBtw.push(Math.abs(ui_slide.scrollPosition[i] - ui_slide.currentPosition));
+                // btw.push(ui_slide.scrollPosition[i] - ui_slide.currentPosition);
             }
-            dis = Math.min.apply(null, btw);
-            // console.log(btw.indexOf(dis))
-            ui_slide.num = btw.indexOf(dis);
-            return ui_slide.num;
+            absDis = Math.min.apply(null, absBtw);
+            ui_slide.num = absBtw.indexOf(absDis);
+            this.ptSlide(ui_slide);
+            // num = absBtw.indexOf(absDis);
+            // dis = btw[num];
+            // if (dis > 0) {
+            //     ui_slide.num = num - 1;
+            // } else {
+            //     ui_slide.num = num;
+            // }
+            // return ui_slide.num;
         },
         ptMakeBtn: function (ui_slide) {
             var btnWidth = ui_slide.buttonWidth,
                 btnHeight = ui_slide.buttonHeight,
-                commonStyle = 'position: absolute;width:' + btnWidth + 'px;height:' + btnHeight + 'px;margin-top:' + (ui_slide.wrapHeight / 2 - btnHeight / 2) + 'px;',
+                commonStyle = 'position: absolute;width:' + btnWidth + 'px;height:' + btnHeight + 'px;margin-top:' + (ui_slide.wrapHeight / 2 - btnHeight / 2) + 'px;font-size:' + btnHeight + 'px;line-height:'+btnHeight+'px;',
                 leftStyle = 'left:0;',
                 rightStyle = 'right:0;';
-                ui_slide.btnLeft = document.createElement('button'),
+            ui_slide.btnLeft = document.createElement('button'),
                 ui_slide.btnRight = document.createElement('button');
             ui_slide.dom.appendChild(ui_slide.btnLeft);
             ui_slide.dom.appendChild(ui_slide.btnRight);
+            ui_slide.btnLeft.innerHTML = '<'
+            ui_slide.btnRight.innerHTML = '>'
             ui_slide.btnLeft.setAttribute('style', commonStyle + leftStyle);
-            ui_slide.btnLeft.setAttribute('class',ui_slide.buttonLeftClassName);
+            ui_slide.btnLeft.setAttribute('class', ui_slide.buttonLeftClassName);
             ui_slide.btnRight.setAttribute('style', commonStyle + rightStyle);
-            ui_slide.btnRight.setAttribute('class',ui_slide.buttonRightClassName)
+            ui_slide.btnRight.setAttribute('class', ui_slide.buttonRightClassName)
         },
         ptBtnAct: function (ui_slide) {
-            ui_slide.btnLeft.addEventListener('click',function(){
-                fnSlider.prototype.ptScrollCheck(ui_slide);
-                ui_slide.num = ui_slide.num - 1 || 0;
+            ui_slide.btnLeft.addEventListener('click', function () {
+                ui_slide.num =  (ui_slide.num > 0) && (ui_slide.num - 1);
+                // console.log(ui_slide.num)
                 fnSlider.prototype.ptSlide(ui_slide);
             })
-            ui_slide.btnRight.addEventListener('click',function(){
-                fnSlider.prototype.ptScrollCheck(ui_slide);
-                ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1)&&(ui_slide.num + 1) || ui_slide.itemLength - 1;
+            ui_slide.btnRight.addEventListener('click', function () {
+                ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1) && (ui_slide.num + 1) || ui_slide.itemLength - 1;
                 fnSlider.prototype.ptSlide(ui_slide);
             })
         },
