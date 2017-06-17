@@ -107,6 +107,17 @@ var slider = function (setting) {
                 }, ui_slide.setIntervalTime * 2)
             }
         },
+        ptBtnAct: function (ui_slide) {
+            // 자석활성화, 버튼 클릭 시 ptScrollCheck 제거
+            ui_slide.btnLeft.addEventListener('click', function () {
+                ui_slide.num = (ui_slide.num > 0) && (ui_slide.num - 1);
+                fnSlider.prototype.ptSlide(ui_slide);
+            })
+            ui_slide.btnRight.addEventListener('click', function () {
+                ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1) && (ui_slide.num + 1) || ui_slide.itemLength - 1;
+                fnSlider.prototype.ptSlide(ui_slide);
+            })
+        },
         ptMouse: function (ui_slide) {
             ui_slide.dom.addEventListener('mousedown', function () {
                 ui_slide.switch = false;
@@ -130,12 +141,10 @@ var slider = function (setting) {
             });
         },
         ptScrollCheck: function (ui_slide) {
-            console.log(ui_slide.magnet)
             if (ui_slide.setInterval || ui_slide.button) {
                 ui_slide.currentPosition = ui_slide.dom.scrollLeft;
             } else if (ui_slide.magnet) {
                 ui_slide.dom.addEventListener('scroll', function () {
-                    console.log('dddd')
                     ui_slide.currentPosition = ui_slide.dom.scrollLeft;
                 })
             }
@@ -183,16 +192,6 @@ var slider = function (setting) {
             ui_slide.btnLeft.setAttribute('class', ui_slide.buttonLeftClassName);
             ui_slide.btnRight.setAttribute('style', commonStyle + rightStyle);
             ui_slide.btnRight.setAttribute('class', ui_slide.buttonRightClassName)
-        },
-        ptBtnAct: function (ui_slide) {
-            ui_slide.btnLeft.addEventListener('click', function () {
-                ui_slide.num = (ui_slide.num > 0) && (ui_slide.num - 1);
-                fnSlider.prototype.ptSlide(ui_slide);
-            })
-            ui_slide.btnRight.addEventListener('click', function () {
-                ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1) && (ui_slide.num + 1) || ui_slide.itemLength - 1;
-                fnSlider.prototype.ptSlide(ui_slide);
-            })
         },
         ptDo: function (ui_slide) {
             this.ptStyle(ui_slide);
