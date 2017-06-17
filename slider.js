@@ -15,16 +15,9 @@ var slider = function (setting) {
             if (duration <= 0) return;
             var difference = to - element.scrollLeft,
                 perTick = difference / duration * 10;
-
             setTimeout(function () {
                 element.scrollLeft = element.scrollLeft + perTick;
-                if (isMobile) {
-                    if (element.scrollLeft === to) {
-                        return element.scrollLeft;
-                    };
-                } else {
-                    if (element.scrollLeft === to) return;
-                }
+                if (element.scrollLeft === to) return;
                 scrollTo(element, to, duration - 10);
             }, 10);
         }
@@ -70,8 +63,6 @@ var slider = function (setting) {
                 (ui_slide.fullWidth) && (style += 'width:' + ui_slide.windowWidth + 'px;');
                 ui_slide.item[i].setAttribute('style', style);
                 ui_slide.wrapWidth += ui_slide.item[i].clientWidth;
-                // console.log(ui_slide.item[i].clientWidth)
-                // console.log(document.body.clientWidth)
                 ui_slide.itemWidth.push(ui_slide.wrapWidth);
             }
         },
@@ -90,7 +81,6 @@ var slider = function (setting) {
             for (i; i < ui_slide.itemLength; i += 1) {
                 ui_slide.scrollPosition[i] = ui_slide.itemWidth[i - 1] || data;
             }
-            // console.log(ui_slide.scrollPosition)
         },
         ptSlide: function (ui_slide) {
             scrollTo(ui_slide.dom, ui_slide.scrollPosition[ui_slide.num], ui_slide.setIntervalSpeed);
@@ -116,36 +106,29 @@ var slider = function (setting) {
             }
         },
         ptMouse: function (ui_slide) {
-            function commonCheck(ui_slide) {
+            ui_slide.dom.addEventListener('mousedown', function () {
+                ui_slide.switch = false;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+            });
+            ui_slide.dom.addEventListener('mouseup', function () {
                 ui_slide.switch = true;
                 (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
                 fnSlider.prototype.ptScrollCheck(ui_slide);
-            }
-            if (isMobile()) {
-                ui_slide.dom.addEventListener('touchstart', function () {
-                    ui_slide.switch = false;
-                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
-                });
-                ui_slide.dom.addEventListener('touchend', function () {
-                    ui_slide.switch = false;
-                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
-                });
-            } else {
-                ui_slide.dom.addEventListener('mousedown', function () {
-                    ui_slide.switch = false;
-                    (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
-                });
-                ui_slide.dom.addEventListener('mouseup', function () {
-                    commonCheck(ui_slide);
-                });
-            }
+            });
+        },
+        ptTouch: function (ui_slide) {
+            ui_slide.dom.addEventListener('touchstart', function () {
+                ui_slide.switch = false;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+            });
+            ui_slide.dom.addEventListener('touchend', function () {
+                ui_slide.switch = true;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
+                fnSlider.prototype.ptScrollCheck(ui_slide);
+            });
         },
         ptScrollCheck: function (ui_slide) {
-            if(!isMobile() && ui_slide.button){
-                ui_slide.dom.addEventListener('scroll',function(){
-                    ui_slide.currentPosition = ui_slide.dom.scrollLeft;
-                })
-            }
+            ui_slide.currentPosition = ui_slide.dom.scrollLeft;
             var i = 0,
                 absBtw = [],
                 // btw = [],
@@ -158,7 +141,11 @@ var slider = function (setting) {
             }
             absDis = Math.min.apply(null, absBtw);
             ui_slide.num = absBtw.indexOf(absDis);
-            this.ptSlide(ui_slide);
+            if(isMobile()){
+                // ui_slide.dom.scrollLeft = 0;
+            }else{
+                this.ptSlide(ui_slide);
+            }
             // num = absBtw.indexOf(absDis);
             // dis = btw[num];
             // if (dis > 0) {
@@ -198,16 +185,18 @@ var slider = function (setting) {
         ptDo: function (ui_slide) {
             this.ptStyle(ui_slide);
             this.ptMoveItem(ui_slide);
-            if (ui_slide.setInterval) {
-                this.ptSlideInit(ui_slide);
-                this.ptSetInt(ui_slide);
+            this.ptSlideInit(ui_slide);
+            if (isMobile()) {
+                this.ptTouch(ui_slide);
+            } else {
                 this.ptMouse(ui_slide);
             }
+            if (ui_slide.setInterval) {
+                this.ptSetInt(ui_slide);
+            }
             if (ui_slide.button) {
-                this.ptSlideInit(ui_slide);
                 this.ptMakeBtn(ui_slide);
                 this.ptBtnAct(ui_slide);
-                this.ptMouse(ui_slide);
             }
         },
     }
