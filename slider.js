@@ -113,12 +113,15 @@ var slider = function (setting) {
             }
         },
         ptBtnAct: function (ui_slide) {
-            // 자석활성화, 버튼 클릭 시 ptScrollCheck 제거
             ui_slide.btnLeft.addEventListener('click', function () {
+                ui_slide.switch = true;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
                 ui_slide.num = (ui_slide.num > 0) && (ui_slide.num - 1);
                 fnSlider.prototype.ptSlide(ui_slide);
             })
             ui_slide.btnRight.addEventListener('click', function () {
+                ui_slide.switch = true;
+                (ui_slide.setInterval) && (fnSlider.prototype.ptStopInt(ui_slide));
                 ui_slide.num = (ui_slide.num < ui_slide.itemLength - 1) && (ui_slide.num + 1) || ui_slide.itemLength - 1;
                 fnSlider.prototype.ptSlide(ui_slide);
             })
